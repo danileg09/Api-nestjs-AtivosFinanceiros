@@ -10,19 +10,29 @@ import {
 } from "flowbite-react";
 import Image from "next/image";
 import { AssetShow } from "../components/AssetShow";
+import { WalletList } from "../components/WalletList";
+
+import { getAssets, getMyWallet } from "@/queries/queries";
 
 
-export async function getAssets(): Promise<Asset[]>{
 
-  const response =  await fetch(`http://localhost:3000/assets`);
-  return response.json();
-
-}
 
 
 export default async function AssetsListPage({searchParams}: {searchParams: Promise<{wallet_id: string}>} ) {
 
   const { wallet_id } = await searchParams;
+
+  
+    if(!wallet_id){
+      return <WalletList />;
+    }
+  
+    const wallet = await getMyWallet(wallet_id);
+  
+    if(!wallet){
+      return <WalletList />;
+    }
+
   const assets = await getAssets();
   console.log(assets[0]);
   return (

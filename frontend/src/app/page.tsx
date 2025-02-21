@@ -10,20 +10,28 @@ import {
 } from "flowbite-react";
 import Image from "next/image";
 import { AssetShow } from "./components/AssetShow";
+import { WalletList } from "./components/WalletList";
+import Link from "next/link";
+import { getMyWallet } from "@/queries/queries";
 
 
-export async function getMyWallet(walletId: string): Promise<Wallet>{
 
-  const response =  await fetch(`http://localhost:3000/wallets/${walletId}`);
-  return response.json();
-
-}
 
 
 export default async function MyWalletListPage({searchParams}: {searchParams: Promise<{wallet_id: string}>} ) {
 
   const { wallet_id } = await searchParams;
+
+  if(!wallet_id){
+    return <WalletList />;
+  }
+
   const wallet = await getMyWallet(wallet_id);
+
+  if(!wallet){
+    return <WalletList />;
+  }
+
   console.log(wallet);
   return (
     <div className="flex flex-col space-y-5 flex-grow">
@@ -48,7 +56,7 @@ export default async function MyWalletListPage({searchParams}: {searchParams: Pr
               <TableCell>R$ {walletAsset.asset.price}</TableCell>
               <TableCell>{walletAsset.shares}</TableCell>
               <TableCell>
-                <Button color="light">Comprar/Vender</Button>
+                <Button color="light" as={Link} href={`/assets/${walletAsset.asset.symbol}?wallet_id=${wallet_id}`}>Comprar/Vender</Button>
               </TableCell>
             </TableRow>
 

@@ -12,19 +12,27 @@ import Image from "next/image";
 import { AssetShow } from "../components/AssetShow";
 import { OrderTypeBadge } from "../components/OrderTypeBadge";
 import { OrderStatusBadge } from "../components/OrderStatusBadge";
+import { getMyWallet, getOrders } from "@/queries/queries";
+import { WalletList } from "../components/WalletList";
 
 
-export async function getOrders(walletId: string): Promise<Order[]>{
-
-  const response =  await fetch(`http://localhost:3000/orders?walletId=${walletId}`);
-  return response.json();
-
-}
 
 
 export default async function OrdersListPage({searchParams}: {searchParams: Promise<{wallet_id: string}>} ) {
 
   const { wallet_id } = await searchParams;
+
+  if(!wallet_id){
+      return <WalletList />;
+    }
+  
+    const wallet = await getMyWallet(wallet_id);
+  
+    if(!wallet){
+      return <WalletList />;
+    }
+
+
   const orders = await getOrders(wallet_id);
   console.log(orders);
   return (

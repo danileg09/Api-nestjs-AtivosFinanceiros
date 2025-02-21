@@ -5,6 +5,8 @@ import { TabsItem } from "@/app/components/Tabs";
 import { OrderForm } from "@/app/components/OrderForm";
 import { ChartComponent } from "@/app/components/ChartComponent";
 import { AssetChartComponent } from "./AssetChartComponent";
+import { WalletList } from "@/app/components/WalletList";
+import { getMyWallet } from "@/queries/queries";
 
 
 
@@ -20,6 +22,16 @@ export default async function AssetDashboard( {params, searchParams}: {params: P
 
     const {assetSymbol} = await params;
     const { wallet_id: walletId } = await searchParams;
+
+    if(!walletId){
+        return <WalletList />;
+      }
+    
+      const wallet = await getMyWallet(walletId);
+    
+      if(!wallet){
+        return <WalletList />;
+      }
 
     const asset = await getAsset(assetSymbol);
 
